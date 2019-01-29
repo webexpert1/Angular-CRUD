@@ -1,7 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
+const postRoutes = require("./routes/posts");
+
+
+// mongo "mongodb+srv://cluster0-wyszx.mongodb.net/test" --username Richie
+// ("mongodb+srv://Richie:<Ht0QiG8JhjSjDwxM>@cluster0-wyszx.mongodb.net/test?retryWrites=true")
+mongoose.connect('mongodb://localhost/test')
+    .then(() => {
+      console.log('Connected to database!');
+    })
+    .catch(() => {
+      console.log('Connection failed');
+    })
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -13,38 +26,13 @@ app.use((req, res, next) => {
     "Origin, X-Requested-with, Content-Type, Accept"
   );
   res.setHeader(
-    "Allow-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
     );
     next();
 });
-
-app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
-  res.status(201).json({
-    message: 'Post added successfully'
-  });
-  console.log(post);
-});
-
-app.get('/api/posts',(req, res, next) => {
-  const posts = [
-    {
-      id: 'fdijidfjfid',
-      title: 'First server side post',
-      content: 'This is coming from the server'
-    },
-    {
-      id: 'fdicdssd',
-      title: 'Second server side post',
-      content: 'Second post is coming from the server'
-    }
-  ];
-  res.status(200).json({
-    message : 'Posts fectched successfully',
-    posts: posts
-  });
-});
+// Ht0QiG8JhjSjDwxM
+app.use("/api/posts", postRoutes);
 
 module.exports = app;
 
